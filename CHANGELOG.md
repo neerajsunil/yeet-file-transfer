@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-27
+
 ### Added
 
 - First version of the desktop app, the `yeet-cli` command-line tool, and the `yeet-core` engine.
