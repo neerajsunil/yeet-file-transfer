@@ -1,11 +1,11 @@
 use crate::args::{Args, Usage};
-use yeet_core::send::{self, Compress, SendOpts};
-use yeet_core::{default_threads, Error, Live, Report};
 use std::net::ToSocketAddrs;
 use std::path::PathBuf;
 use std::process::ExitCode;
 use std::sync::Arc;
 use std::time::Duration;
+use yeet_core::send::{self, Compress, SendOpts};
+use yeet_core::{default_threads, Error, Live, Report};
 
 /// A receiver started at the same moment may not be listening yet; retry this long.
 const STARTUP_RETRIES: u32 = 50;

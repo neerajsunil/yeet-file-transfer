@@ -93,13 +93,16 @@ impl Slot {
         let mut off = offset;
         loop {
             let buf = parked.as_deref().unwrap_or(data);
-            #[cfg(feature = "timing")] let t0 = std::time::Instant::now();
-            #[cfg(feature = "timing")] let opened = file.is_some();
+            #[cfg(feature = "timing")]
+            let t0 = std::time::Instant::now();
+            #[cfg(feature = "timing")]
+            let opened = file.is_some();
             let written = match file.as_mut() {
                 Some(f) => write_all_at(f, buf, off),
                 None => self.open(resuming).and_then(|f| write_all_at(file.insert(f), buf, off)),
             };
-            #[cfg(feature = "timing")] if t0.elapsed() > std::time::Duration::from_millis(100) {
+            #[cfg(feature = "timing")]
+            if t0.elapsed() > std::time::Duration::from_millis(100) {
                 eprintln!("[slow] {:?} open={} {} bytes {}", t0.elapsed(), !opened, buf.len(), self.path.display());
             }
             let mut st = self.lock();

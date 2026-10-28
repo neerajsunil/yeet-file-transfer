@@ -67,7 +67,11 @@ impl Disk {
 
     /// Largest file this drive's format can hold.
     pub fn max_file(&self) -> u64 {
-        if self.fs == Fs::Fat { u32::MAX as u64 } else { u64::MAX }
+        if self.fs == Fs::Fat {
+            u32::MAX as u64
+        } else {
+            u64::MAX
+        }
     }
 
     pub fn encode(&self) -> [u8; 2] {
@@ -259,8 +263,11 @@ mod sys {
         };
         // SAFETY: `h` came from CreateFileW and is closed once.
         unsafe { CloseHandle(h) };
-        (ok != 0 && got as usize >= std::mem::size_of::<SeekPenalty>() - 3)
-            .then(|| if out.incurs_seek_penalty != 0 { Media::Hdd } else { Media::Ssd })
+        (ok != 0 && got as usize >= std::mem::size_of::<SeekPenalty>() - 3).then_some(if out.incurs_seek_penalty != 0 {
+            Media::Hdd
+        } else {
+            Media::Ssd
+        })
     }
 }
 

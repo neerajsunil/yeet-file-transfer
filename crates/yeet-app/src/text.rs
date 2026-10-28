@@ -1,7 +1,7 @@
 //! Wording shown to people: names, labels and error messages.
 
-use yeet_core::Error;
 use std::path::Path;
+use yeet_core::Error;
 
 /// The last part of a path, for display.
 pub fn file_name(p: &Path) -> String {

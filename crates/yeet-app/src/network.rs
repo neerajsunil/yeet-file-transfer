@@ -2,10 +2,10 @@
 
 use crate::receiver::Receiver;
 use crate::state::{App, Device};
-use yeet_core::discovery::{Discovery, PeerEvent};
-use yeet_core::{recv, RECEIVE_WRITERS};
 use std::net::TcpListener;
 use std::sync::Arc;
+use yeet_core::discovery::{Discovery, PeerEvent};
+use yeet_core::{recv, RECEIVE_WRITERS};
 
 /// How many ports after the configured one to try, so a second copy (or another app on the
 /// port) doesn't stop receiving.

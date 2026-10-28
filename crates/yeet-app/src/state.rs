@@ -5,12 +5,12 @@
 //! Slint objects.
 
 use crate::settings::Settings;
-use yeet_core::discovery::{Discovery, Peer};
-use yeet_core::{Live, Report};
 use std::net::SocketAddr;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::{Duration, Instant};
+use yeet_core::discovery::{Discovery, Peer};
+use yeet_core::{Live, Report};
 
 pub struct App {
     state: Mutex<State>,

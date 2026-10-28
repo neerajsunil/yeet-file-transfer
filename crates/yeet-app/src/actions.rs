@@ -5,12 +5,12 @@ use crate::platform;
 use crate::settings::DEFAULT_PORT;
 use crate::state::{App, Device, Item, State, Transfer};
 use crate::text;
-use yeet_core::discovery::Peer;
-use yeet_core::send::{self, Compress, SendOpts};
-use yeet_core::{default_threads, Live};
 use std::net::{SocketAddr, ToSocketAddrs};
 use std::path::PathBuf;
 use std::sync::Arc;
+use yeet_core::discovery::Peer;
+use yeet_core::send::{self, Compress, SendOpts};
+use yeet_core::{default_threads, Live};
 
 /// zstd level used when compression is on: fast enough to keep up with gigabit.
 const ZSTD_LEVEL: i32 = 3;
