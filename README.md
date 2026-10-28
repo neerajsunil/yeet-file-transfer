@@ -3,7 +3,8 @@
 [![License: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 [![Rust 1.92+](https://img.shields.io/badge/rust-1.92%2B-orange.svg)](https://rustup.rs)
 ![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)
-![Status](https://img.shields.io/badge/status-pre--release-yellow.svg)
+[![Release](https://img.shields.io/github/v/release/neerajsunil/yeet-file-transfer)](https://github.com/neerajsunil/yeet-file-transfer/releases/latest)
+[![CI](https://github.com/neerajsunil/yeet-file-transfer/actions/workflows/ci.yml/badge.svg)](https://github.com/neerajsunil/yeet-file-transfer/actions/workflows/ci.yml)
 
 yeet copies files and folders between computers on the same local network. It is designed for large transfers, such as game installs, source trees and photo libraries, over 1 Gbps Ethernet and Wi-Fi, where the network is usually the bottleneck.
 
@@ -106,7 +107,28 @@ scripts/run.sh /tmp/dest 1g --verify <folder>
 
 ## Installation
 
-Prebuilt releases are not available yet. To build from source, install [Rust](https://rustup.rs) 1.92 or newer, then run:
+Download the archive for your platform from the [latest release](https://github.com/neerajsunil/yeet-file-transfer/releases/latest):
+
+| Platform | Download |
+|---|---|
+| Windows 10/11 (x64) | `yeet-<version>-windows-x64.zip` |
+| Linux (x64, glibc 2.35+) | `yeet-<version>-linux-x64.tar.gz` |
+| macOS (Apple silicon) | `yeet-<version>-macos-arm64.tar.gz` |
+
+Each archive contains the desktop app (`yeet`) and the command-line tool (`yeet-cli`). There is no installer: extract the archive and run `yeet`. Checksums are in `SHA256SUMS.txt` on the release page.
+
+The binaries are not code-signed yet:
+
+- **Windows:** SmartScreen may show "Windows protected your PC". Choose **More info**, then **Run anyway**.
+- **macOS:** remove the download quarantine before the first run:
+
+  ```bash
+  xattr -d com.apple.quarantine yeet yeet-cli
+  ```
+
+### Building from source
+
+Install [Rust](https://rustup.rs) 1.92 or newer, then run:
 
 ```bash
 cargo build --release
@@ -114,9 +136,7 @@ cargo build --release
 
 This produces `target/release/yeet` (desktop app) and `target/release/yeet-cli` (command line).
 
-### Linux
-
-Building needs the fontconfig and xkbcommon development headers. On Debian or Ubuntu:
+On Linux, building needs the fontconfig and xkbcommon development headers. On Debian or Ubuntu:
 
 ```bash
 sudo apt install libfontconfig1-dev libxkbcommon-dev
@@ -192,7 +212,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the design and [docs/PROTOC
 
 ## Project status
 
-yeet is pre-release (0.1.0). The wire protocol (`YET1`) may change between versions, so both computers should run the same build. See [CHANGELOG.md](CHANGELOG.md) for what has changed.
+yeet is in early development (0.x). The wire protocol (`YET1`) may change between versions, so both computers should run the same build. See [CHANGELOG.md](CHANGELOG.md) for what has changed.
 
 yeet has no encryption or authentication yet and is intended for trusted local networks. Every incoming transfer must be accepted on the receiving computer.
 
