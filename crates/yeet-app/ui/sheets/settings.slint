@@ -1,0 +1,152 @@
+// Device name, save folder and compression, as a grouped form.
+
+import { Albedo } from "../albedo.slint";
+import { Button, ButtonKind, Field, Switch, Separator } from "../components/controls.slint";
+import { Sheet } from "../components/sheet.slint";
+
+component Group inherits Rectangle {
+    background: Albedo.dark ? Albedo.surface-disabled : Albedo.bg;
+    border-radius: Albedo.radius-md;
+    border-width: 1px;
+    border-color: Albedo.line;
+    VerticalLayout {
+        @children
+    }
+}
+
+// A label on the left and its control on the right.
+component FormRow inherits HorizontalLayout {
+    in property <string> label;
+    min-height: 44px;
+    padding-left: 12px;
+    padding-right: 8px;
+    spacing: Albedo.space-3;
+    Text {
+        text: root.label;
+        vertical-alignment: center;
+        horizontal-stretch: 0;
+        font-size: Albedo.text-body-sm;
+        color: Albedo.fg;
+    }
+    @children
+}
+
+component Footnote inherits Text {
+    font-size: Albedo.text-caption;
+    color: Albedo.fg-3;
+    wrap: word-wrap;
+    x: 4px;
+}
+
+export component SettingsSheet inherits Sheet {
+    in-out property <string> name;
+    in property <string> folder;
+    in property <string> address;
+    in-out property <bool> compress;
+    callback choose-folder;
+    callback done;
+    sheet-width: 420px;
+
+    Text {
+        text: "Settings";
+        font-size: Albedo.text-reading;
+        font-weight: 600;
+        color: Albedo.fg;
+        horizontal-alignment: center;
+    }
+    VerticalLayout {
+        spacing: 6px;
+        Group {
+            FormRow {
+                label: "Name";
+                VerticalLayout {
+                    alignment: center;
+                    horizontal-stretch: 1;
+                    Field {
+                        height: 32px;
+                        text <=> root.name;
+                        placeholder-text: "Name other devices see";
+                    }
+                }
+            }
+            Separator { inset: 12px; }
+            FormRow {
+                label: "Save to";
+                Text {
+                    text: root.folder;
+                    vertical-alignment: center;
+                    horizontal-alignment: right;
+                    horizontal-stretch: 1;
+                    font-size: Albedo.text-label;
+                    color: Albedo.fg-2;
+                    overflow: elide;
+                }
+                VerticalLayout {
+                    alignment: center;
+                    Button {
+                        text: "Change…";
+                        small: true;
+                        height: 28px;
+                        clicked => { root.choose-folder(); }
+                    }
+                }
+            }
+        }
+    }
+    VerticalLayout {
+        spacing: 6px;
+        Group {
+            FormRow {
+                label: "Smart compression";
+                Rectangle { horizontal-stretch: 1; }
+                VerticalLayout {
+                    alignment: center;
+                    Switch {
+                        checked <=> root.compress;
+                    }
+                }
+            }
+        }
+        Footnote {
+            text: "Compresses only what gets smaller. Faster on Wi-Fi and 1 Gbps links.";
+        }
+    }
+    VerticalLayout {
+        spacing: 6px;
+        Group {
+            FormRow {
+                label: "This computer";
+                Text {
+                    text: root.address;
+                    vertical-alignment: center;
+                    horizontal-alignment: right;
+                    horizontal-stretch: 1;
+                    font-size: Albedo.text-label;
+                    color: Albedo.fg-2;
+                    overflow: elide;
+                }
+                Rectangle { width: 4px; }
+            }
+        }
+        Footnote {
+            text: "Use this address on the other computer if it can't find this one.";
+        }
+    }
+    HorizontalLayout {
+        padding-top: Albedo.space-1;
+        spacing: Albedo.space-3;
+        Text {
+            text: "yeet 0.1";
+            font-size: Albedo.text-caption;
+            color: Albedo.fg-3;
+            vertical-alignment: center;
+            horizontal-stretch: 1;
+        }
+        Button {
+            text: "Done";
+            small: true;
+            kind: ButtonKind.primary;
+            clicked => { root.done(); }
+        }
+    }
+}

@@ -1,0 +1,138 @@
+// The "Send to" section: nearby devices as round tiles, AirDrop style. Clicking one sends.
+
+import { Albedo } from "../albedo.slint";
+import { DeviceRow } from "../rows.slint";
+import { Card } from "../components/controls.slint";
+
+component DeviceTile inherits Rectangle {
+    in property <image> icon;
+    in property <string> title;
+    in property <string> caption;
+    in property <bool> enabled: true;
+    // Draws faint rings around the circle, for the "still looking" tile.
+    in property <bool> searching;
+    callback clicked;
+
+    property <bool> hot: touch.has-hover && root.enabled;
+    property <length> circle: 56px;
+    width: 104px;
+    height: 112px;
+    opacity: root.enabled ? 1 : 0.45;
+    animate opacity { duration: Albedo.duration-base; }
+
+    if root.searching: Rectangle {
+        width: root.circle + 16px;
+        height: self.width;
+        x: (root.width - self.width) / 2;
+        y: 10px - 8px;
+        border-radius: self.width / 2;
+        border-width: 1px;
+        border-color: Albedo.accent.with-alpha(0.25);
+    }
+    Rectangle {
+        x: (root.width - self.width) / 2;
+        y: 10px;
+        width: root.circle;
+        height: self.width;
+        border-radius: self.width / 2;
+        background: touch.pressed && root.enabled ? Albedo.accent
+            : root.hot ? Albedo.accent-soft
+            : Albedo.surface;
+        animate background { duration: Albedo.duration-fast; easing: cubic-bezier(0.2, 0.8, 0.2, 1); }
+        Image {
+            source: root.icon;
+            width: 26px;
+            height: self.width;
+            colorize: touch.pressed && root.enabled ? Albedo.on-accent
+                : root.hot || root.searching ? Albedo.accent-text
+                : Albedo.fg-2;
+        }
+    }
+    Text {
+        x: 2px;
+        y: 10px + root.circle + 8px;
+        width: root.width - 4px;
+        text: root.title;
+        font-size: Albedo.text-label;
+        font-weight: 500;
+        color: Albedo.fg;
+        horizontal-alignment: center;
+        overflow: elide;
+    }
+    Text {
+        x: 2px;
+        y: 10px + root.circle + 26px;
+        width: root.width - 4px;
+        text: root.caption;
+        font-size: Albedo.text-caption;
+        color: Albedo.fg-3;
+        horizontal-alignment: center;
+        overflow: elide;
+    }
+    touch := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: root.enabled ? pointer : default;
+        clicked => { root.clicked(); }
+    }
+}
+
+export component DeviceGrid inherits Card {
+    in property <[DeviceRow]> devices;
+    // False until something is picked: device tiles dim and can't be clicked.
+    in property <bool> can-send;
+    callback send-to(int);
+    callback send-here;
+    callback connect-manual;
+
+    property <length> pad: Albedo.space-3;
+    property <length> cell-w: 104px;
+    property <length> cell-h: 116px;
+    property <bool> looking: root.devices.length == 0;
+    // "This PC", then devices, then the "Looking…" tile when there are none, then "Other…".
+    property <int> count: 1 + root.devices.length + (root.looking ? 1 : 0) + 1;
+    property <int> cols: max(1, floor((root.width - 2 * root.pad) / root.cell-w));
+    property <int> rows: ceil(root.count / root.cols);
+    property <int> used: min(root.cols, root.count);
+    property <length> left: (root.width - root.used * root.cell-w) / 2;
+
+    height: root.rows * root.cell-h + 2 * root.pad;
+
+    DeviceTile {
+        x: root.left + (root.cell-w - self.width) / 2;
+        y: root.pad;
+        icon: @image-url("../icons/desktop.svg");
+        title: "This PC";
+        caption: "Another drive or folder";
+        enabled: root.can-send;
+        clicked => { root.send-here(); }
+    }
+    for device[i] in root.devices: DeviceTile {
+        property <int> idx: i + 1;
+        x: root.left + mod(self.idx, root.cols) * root.cell-w + (root.cell-w - self.width) / 2;
+        y: root.pad + floor(self.idx / root.cols) * root.cell-h;
+        icon: @image-url("../icons/laptop.svg");
+        title: device.name;
+        caption: device.detail;
+        enabled: root.can-send;
+        clicked => { root.send-to(i); }
+    }
+    if root.looking: DeviceTile {
+        x: root.left + mod(1, root.cols) * root.cell-w + (root.cell-w - self.width) / 2;
+        y: root.pad + floor(1 / root.cols) * root.cell-h;
+        icon: @image-url("../icons/arrow-clockwise.svg");
+        title: "Looking…";
+        caption: "Same network";
+        searching: true;
+        enabled: false;
+        opacity: 1;
+    }
+    DeviceTile {
+        property <int> idx: root.count - 1;
+        x: root.left + mod(self.idx, root.cols) * root.cell-w + (root.cell-w - self.width) / 2;
+        y: root.pad + floor(self.idx / root.cols) * root.cell-h;
+        icon: @image-url("../icons/network.svg");
+        title: "Other…";
+        caption: "By IP address";
+        clicked => { root.connect-manual(); }
+    }
+}

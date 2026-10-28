@@ -1,0 +1,20 @@
+[package]
+name = "yeet-cli"
+description = "Command-line sender and receiver for yeet, plus developer tools"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[features]
+timing = ["yeet-core/timing"]
+
+[dependencies]
+yeet-core.workspace = true
+rayon = "1"
+walkdir.workspace = true
+xxhash-rust = { version = "0.8", features = ["xxh3"] }
+
+[lints]
+workspace = true

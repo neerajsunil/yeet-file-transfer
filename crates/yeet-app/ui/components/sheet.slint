@@ -1,0 +1,26 @@
+// A centered panel over a veiled window, for questions and settings.
+
+import { Albedo } from "../albedo.slint";
+
+export component Sheet inherits Rectangle {
+    in property <length> sheet-width: 360px;
+    // A veil in the page colour: flat, and it dims in dark mode and fades in light mode.
+    background: Albedo.bg.with-alpha(0.78);
+    TouchArea { }
+    Rectangle {
+        width: min(root.width - 2 * Albedo.space-4, root.sheet-width);
+        height: min(lay.preferred-height, root.height - 2 * Albedo.space-4);
+        x: (root.width - self.width) / 2;
+        y: (root.height - self.height) / 2;
+        background: Albedo.panel;
+        border-radius: Albedo.radius-xl;
+        border-width: 1px;
+        border-color: Albedo.line;
+        clip: true;
+        lay := VerticalLayout {
+            padding: Albedo.space-5;
+            spacing: 14px;
+            @children
+        }
+    }
+}

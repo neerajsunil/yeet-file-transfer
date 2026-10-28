@@ -1,0 +1,63 @@
+// Adds a device by IP address when discovery can't find it.
+
+import { Albedo } from "../albedo.slint";
+import { Button, ButtonKind, Field, Glyph } from "../components/controls.slint";
+import { Sheet } from "../components/sheet.slint";
+
+export component ConnectSheet inherits Sheet {
+    in-out property <string> address;
+    callback connect(string);
+    callback cancel;
+    sheet-width: 340px;
+
+    HorizontalLayout {
+        alignment: center;
+        padding-top: Albedo.space-1;
+        Glyph {
+            size: 56px;
+            icon: @image-url("../icons/network.svg");
+            tint: Albedo.accent-text;
+            well: Albedo.accent-soft;
+        }
+    }
+    VerticalLayout {
+        spacing: 4px;
+        Text {
+            text: "Connect by IP Address";
+            font-size: Albedo.text-reading;
+            font-weight: 600;
+            color: Albedo.fg;
+            horizontal-alignment: center;
+        }
+        Text {
+            text: "For when the other computer doesn't show up. Its address is in yeet's settings there.";
+            font-size: Albedo.text-label;
+            color: Albedo.fg-2;
+            horizontal-alignment: center;
+            wrap: word-wrap;
+        }
+    }
+    Field {
+        height: 36px;
+        text <=> root.address;
+        placeholder-text: "192.168.1.20";
+        accepted => { root.connect(root.address); }
+    }
+    HorizontalLayout {
+        spacing: Albedo.space-2;
+        Button {
+            horizontal-stretch: 1;
+            small: true;
+            text: "Cancel";
+            clicked => { root.cancel(); }
+        }
+        Button {
+            horizontal-stretch: 1;
+            small: true;
+            text: "Connect";
+            kind: ButtonKind.primary;
+            enabled: root.address != "";
+            clicked => { root.connect(root.address); }
+        }
+    }
+}

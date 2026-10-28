@@ -1,0 +1,246 @@
+// yeet main window: header, the Send / Send to / Activity sections, the toast and the sheets.
+// Everything the Rust side reads or writes is a property or callback on AppWindow.
+
+import { ScrollView, Palette } from "std-widgets.slint";
+import { Albedo, Star } from "albedo.slint";
+import { ItemRow, DeviceRow, TransferRow } from "rows.slint";
+import { SectionHeader, IconButton, StarDot, Wordmark } from "components/controls.slint";
+import { ItemList, PickCard } from "views/items.slint";
+import { DeviceGrid } from "views/devices.slint";
+import { TransferList } from "views/transfer-card.slint";
+import { DefenderBanner } from "views/defender-banner.slint";
+import { OfferSheet } from "sheets/offer.slint";
+import { SettingsSheet } from "sheets/settings.slint";
+import { ConnectSheet } from "sheets/connect.slint";
+
+export { Albedo, ItemRow, DeviceRow, TransferRow }
+
+export component AppWindow inherits Window {
+    title: "yeet";
+    icon: @image-url("logo.svg");
+    preferred-width: 480px;
+    preferred-height: 680px;
+    min-width: 380px;
+    min-height: 520px;
+    // Override until Albedo's light tokens change: its light page (#f2f3f6) is nearly the same as
+    // its panels (#fdfdff), so cards melt into the page. Dark mode uses Albedo as is.
+    background: Albedo.dark ? Albedo.bg : #e6e8ed;
+
+    in property <string> device-name;
+    in property <[ItemRow]> items;
+    in property <string> items-summary;
+    in property <[DeviceRow]> devices;
+    // Still set by the Rust side; the grid sends on click, so nothing shows a selection.
+    in property <int> selected-device: -1;
+    in property <[TransferRow]> transfers;
+    in property <string> toast;
+    in property <bool> defender-banner;
+    in property <bool> defender-busy;
+
+    in-out property <bool> offer-visible;
+    in property <string> offer-from;
+    in property <string> offer-summary;
+    in property <[string]> offer-items;
+
+    in-out property <bool> settings-visible;
+    in-out property <string> settings-name;
+    in property <string> settings-folder;
+    in property <string> settings-addresses;
+    in-out property <bool> settings-compress;
+
+    in-out property <bool> connect-visible;
+    in-out property <string> connect-address;
+
+    // 0 = follow the OS, 1 = light, 2 = dark (used for screenshots).
+    in property <int> force-scheme;
+    property <bool> os-dark: Palette.color-scheme == ColorScheme.dark;
+    init => {
+        Albedo.dark = root.os-dark;
+        Albedo.star = Star.spica;
+    }
+    changed os-dark => {
+        if root.force-scheme == 0 {
+            Albedo.dark = root.os-dark;
+        }
+    }
+    changed force-scheme => {
+        if self.force-scheme != 0 {
+            Palette.color-scheme = self.force-scheme == 2 ? ColorScheme.dark : ColorScheme.light;
+            Albedo.dark = self.force-scheme == 2;
+        }
+    }
+
+    callback add-files;
+    callback add-folder;
+    callback remove-item(int);
+    callback clear-items;
+    callback select-device(int);
+    callback send;
+    callback send-here;
+    callback cancel-transfer(int);
+    callback open-transfer(int);
+    callback dismiss-transfer(int);
+    callback accept-offer;
+    callback decline-offer;
+    callback open-settings;
+    callback save-settings;
+    callback choose-folder;
+    callback connect-manual(string);
+    callback exclude-defender;
+
+    property <bool> has-items: root.items.length > 0;
+    // Content stays a readable column when the window is made wide.
+    property <length> gutter: max(Albedo.space-4, (root.width - 560px) / 2);
+
+    VerticalLayout {
+        ScrollView {
+            vertical-stretch: 1;
+            VerticalLayout {
+                padding-left: root.gutter;
+                padding-right: root.gutter;
+                padding-top: Albedo.space-3;
+                padding-bottom: Albedo.space-7;
+                spacing: Albedo.space-2;
+                alignment: start;
+
+                // Header
+                HorizontalLayout {
+                    padding-left: 4px;
+                    padding-right: 0px;
+                    padding-top: Albedo.space-3;
+                    padding-bottom: Albedo.space-2;
+                    spacing: Albedo.space-3;
+                    VerticalLayout {
+                        alignment: center;
+                        Image {
+                            source: @image-url("logo.svg");
+                            width: 44px;
+                            height: 44px;
+                        }
+                    }
+                    VerticalLayout {
+                        spacing: 2px;
+                        Wordmark { }
+                        HorizontalLayout {
+                            spacing: 6px;
+                            VerticalLayout {
+                                alignment: center;
+                                StarDot { }
+                            }
+                            Text {
+                                text: "Discoverable as " + root.device-name;
+                                font-size: Albedo.text-caption;
+                                color: Albedo.fg-2;
+                                overflow: elide;
+                            }
+                        }
+                    }
+                    VerticalLayout {
+                        alignment: start;
+                        padding-top: 2px;
+                        IconButton {
+                            icon: @image-url("icons/gear.svg");
+                            clicked => { root.open-settings(); }
+                        }
+                    }
+                }
+
+                if root.defender-banner: VerticalLayout {
+                    padding-bottom: Albedo.space-3;
+                    DefenderBanner {
+                        busy: root.defender-busy;
+                        exclude => { root.exclude-defender(); }
+                    }
+                }
+
+                SectionHeader {
+                    title: "Send";
+                    note: root.has-items ? root.items-summary : "";
+                    action: root.has-items ? "Clear" : "";
+                    clicked => { root.clear-items(); }
+                }
+                if !root.has-items: PickCard {
+                    add-files => { root.add-files(); }
+                    add-folder => { root.add-folder(); }
+                }
+                if root.has-items: ItemList {
+                    items: root.items;
+                    remove(i) => { root.remove-item(i); }
+                    add-files => { root.add-files(); }
+                    add-folder => { root.add-folder(); }
+                }
+
+                Rectangle { height: Albedo.space-2; }
+                SectionHeader {
+                    title: "Send to";
+                    note: root.devices.length == 0 ? "Open yeet on the other computer"
+                        : root.has-items ? "Click a device to send" : "Choose something to send first";
+                }
+                DeviceGrid {
+                    devices: root.devices;
+                    can-send: root.has-items;
+                    send-to(i) => {
+                        root.select-device(i);
+                        root.send();
+                    }
+                    send-here => { root.send-here(); }
+                    connect-manual => {
+                        root.connect-address = "";
+                        root.connect-visible = true;
+                    }
+                }
+
+                if root.transfers.length > 0: Rectangle { height: Albedo.space-2; }
+                if root.transfers.length > 0: SectionHeader { title: "Activity"; }
+                if root.transfers.length > 0: TransferList {
+                    transfers: root.transfers;
+                    cancel(i) => { root.cancel-transfer(i); }
+                    open(i) => { root.open-transfer(i); }
+                    dismiss(i) => { root.dismiss-transfer(i); }
+                }
+            }
+        }
+    }
+
+    if root.toast != "": Rectangle {
+        y: parent.height - self.height - Albedo.space-5;
+        x: (parent.width - self.width) / 2;
+        width: min(parent.width - 2 * Albedo.space-4, toast-text.preferred-width + 32px);
+        height: toast-text.preferred-height + 20px;
+        border-radius: self.height / 2;
+        // Albedo's toast: the text colour as the fill, for contrast without a shadow.
+        background: Albedo.fg;
+        toast-text := Text {
+            text: root.toast;
+            color: Albedo.bg;
+            font-size: Albedo.text-label;
+            font-weight: 500;
+            horizontal-alignment: center;
+            wrap: word-wrap;
+            width: parent.width - 32px;
+        }
+    }
+
+    if root.offer-visible: OfferSheet {
+        from: root.offer-from;
+        summary: root.offer-summary;
+        items: root.offer-items;
+        accept => { root.accept-offer(); }
+        decline => { root.decline-offer(); }
+    }
+
+    if root.settings-visible: SettingsSheet {
+        name <=> root.settings-name;
+        folder: root.settings-folder;
+        address: root.settings-addresses;
+        compress <=> root.settings-compress;
+        choose-folder => { root.choose-folder(); }
+        done => { root.save-settings(); }
+    }
+
+    if root.connect-visible: ConnectSheet {
+        address <=> root.connect-address;
+        connect(text) => { root.connect-manual(text); }
+        cancel => { root.connect-visible = false; }
+    }
+}

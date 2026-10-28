@@ -1,0 +1,53 @@
+// Warns that Windows Security scans every received file, with a fix.
+
+import { Albedo } from "../albedo.slint";
+import { Card, Button } from "../components/controls.slint";
+
+export component DefenderBanner inherits Card {
+    in property <bool> busy;
+    callback exclude;
+    background: Albedo.warning.with-alpha(Albedo.dark ? 0.12 : 0.1);
+    border-color: Albedo.warning.with-alpha(0.3);
+    HorizontalLayout {
+        padding: Albedo.space-3;
+        padding-left: 14px;
+        spacing: Albedo.space-3;
+        VerticalLayout {
+            alignment: start;
+            padding-top: 1px;
+            Image {
+                source: @image-url("../icons/exclamation.svg");
+                width: 18px;
+                height: 18px;
+                colorize: Albedo.warning;
+            }
+        }
+        VerticalLayout {
+            spacing: 2px;
+            horizontal-stretch: 1;
+            Text {
+                text: "Receiving is slowed down";
+                font-size: Albedo.text-label;
+                font-weight: 600;
+                color: Albedo.fg;
+                wrap: word-wrap;
+            }
+            Text {
+                text: "Windows scans and renames every file that arrives. Turn this off for your save folder.";
+                font-size: Albedo.text-caption;
+                color: Albedo.fg-2;
+                wrap: word-wrap;
+            }
+        }
+        VerticalLayout {
+            alignment: center;
+            Button {
+                text: root.busy ? "Waiting…" : "Speed Up";
+                enabled: !root.busy;
+                small: true;
+                height: 30px;
+                clicked => { root.exclude(); }
+            }
+        }
+    }
+}

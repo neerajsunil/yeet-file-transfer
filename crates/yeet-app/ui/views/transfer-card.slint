@@ -1,0 +1,118 @@
+// The "Activity" section: every transfer as a row in one card, with its progress and actions.
+
+import { Albedo } from "../albedo.slint";
+import { TransferRow } from "../rows.slint";
+import { Card, Button, ButtonKind, IconButton, Glyph, Separator, ProgressBar } from "../components/controls.slint";
+
+component TransferItem inherits VerticalLayout {
+    in property <TransferRow> data;
+    callback cancel;
+    callback open;
+    callback dismiss;
+    property <bool> running: data.state == "waiting" || data.state == "active" || data.state == "reconnecting";
+    property <color> tone: data.state == "failed" ? Albedo.danger
+        : data.state == "done" ? Albedo.success
+        : data.state == "reconnecting" ? Albedo.warning
+        : Albedo.accent;
+
+    padding-left: 12px;
+    padding-right: 10px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    HorizontalLayout {
+        spacing: 12px;
+        VerticalLayout {
+            alignment: start;
+            Glyph {
+                size: 32px;
+                icon: data.state == "done" ? @image-url("../icons/checkmark.svg")
+                    : data.state == "failed" ? @image-url("../icons/exclamation.svg")
+                    : data.state == "reconnecting" ? @image-url("../icons/arrow-clockwise.svg")
+                    : data.incoming ? @image-url("../icons/arrow-down.svg") : @image-url("../icons/arrow-up.svg");
+                tint: data.state == "active" || data.state == "waiting" ? Albedo.accent-text : root.tone;
+                well: data.state == "active" || data.state == "waiting" ? Albedo.accent-soft : root.tone.with-alpha(Albedo.dark ? 0.18 : 0.14);
+            }
+        }
+        VerticalLayout {
+            spacing: 2px;
+            horizontal-stretch: 1;
+            HorizontalLayout {
+                spacing: Albedo.space-2;
+                Text {
+                    text: data.title;
+                    font-size: Albedo.text-body-sm;
+                    font-weight: 600;
+                    color: Albedo.fg;
+                    overflow: elide;
+                }
+                Text {
+                    text: data.subtitle;
+                    horizontal-stretch: 1;
+                    vertical-alignment: center;
+                    font-size: Albedo.text-caption;
+                    color: Albedo.fg-3;
+                    overflow: elide;
+                }
+            }
+            if root.running: VerticalLayout {
+                padding-top: 6px;
+                padding-bottom: 4px;
+                ProgressBar {
+                    value: data.progress;
+                    tint: root.tone;
+                }
+            }
+            Text {
+                text: data.detail;
+                font-size: Albedo.text-caption;
+                color: data.state == "failed" ? Albedo.danger : Albedo.fg-2;
+                wrap: word-wrap;
+            }
+        }
+        if root.running: VerticalLayout {
+            alignment: start;
+            Button {
+                text: "Stop";
+                small: true;
+                kind: ButtonKind.ghost;
+                height: 28px;
+                clicked => { root.cancel(); }
+            }
+        }
+        if !root.running && data.can-open: VerticalLayout {
+            alignment: start;
+            Button {
+                text: "Show";
+                small: true;
+                height: 28px;
+                clicked => { root.open(); }
+            }
+        }
+        if !root.running: VerticalLayout {
+            alignment: start;
+            IconButton {
+                width: 28px;
+                icon: @image-url("../icons/xmark.svg");
+                clicked => { root.dismiss(); }
+            }
+        }
+    }
+}
+
+export component TransferList inherits Card {
+    in property <[TransferRow]> transfers;
+    callback cancel(int);
+    callback open(int);
+    callback dismiss(int);
+    VerticalLayout {
+        for t[i] in root.transfers: VerticalLayout {
+            if i > 0: Separator { inset: 56px; }
+            TransferItem {
+                data: t;
+                cancel => { root.cancel(i); }
+                open => { root.open(i); }
+                dismiss => { root.dismiss(i); }
+            }
+        }
+    }
+}

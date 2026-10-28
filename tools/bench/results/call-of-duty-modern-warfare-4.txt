@@ -1,0 +1,35 @@
+== D:/Games/Call of Duty Modern Warfare 4 ==
+scan: 2004 files, 78.58 GB in 0.00s (729470 files/s)
+sizes:  <4K: 54 files/0.0%  4K-64K: 535 files/0.0%  64K-1M: 813 files/0.4%  1M-16M: 432 files/2.2%  16M-256M: 92 files/7.3%  >256M: 78 files/90.1%
+sample: 2070 MiB in 523 blocks from 564 file reads, read at 3902 MB/s (0.56s, parallel random reads)
+
+codec      ratio   compress MB/s   decompress MB/s   (16 threads, measured)
+lz4        0.986           19046             19459
+zstd-5     0.982           15865             16237
+zstd-1     0.980           16002             16242
+zstd1      0.973           11330             15307
+zstd3      0.971            5446             15139
+zstd6      0.970            3327             15006
+zstd9      0.970            1844             13348
+zstd12     0.970             883             15120
+
+incompressible blocks (zstd1 saves <3%): 90% of sampled bytes
+
+class        files     GB   share | ratio: lz4  zstd1  zstd3  zstd9 | best@100M  best@1G  best@2.5G  best@10G
+xsub            93   71.2   90.5% |       1.00  0.99   0.99   0.98  |      none      none      none      none
+ff            1466    4.2    5.3% |       1.00  0.99   0.98   0.98  |      none      none      none      none
+psolib          90    1.3    1.6% |       1.00  1.00   0.99   1.00  |      none      none      none      none
+dll            147    1.0    1.2% |       0.77  0.57   0.55   0.54  |     zstd3     zstd3     zstd3     zstd3
+exe             15    0.6    0.8% |       0.79  0.74   0.70   0.68  |     zstd3     zstd3     zstd3     zstd3
+other          193    0.4    0.5% |       0.56  0.35   0.33   0.32  |     zstd6     zstd3     zstd3     zstd3
+
+estimated transfer time for 78.6 GB (16 threads each side)
+strategy               100M               1G             2.5G              10G
+none            1h51m   net     11m09s   net      4m28s   net      1m07s   net
+lz4             1h50m   net     11m01s   net      4m25s   net      1m06s   net
+zstd-1          1h49m   net     10m57s   net      4m23s   net      1m06s   net
+zstd1           1h48m   net     10m53s   net      4m21s   net      1m05s   net
+zstd3           1h48m   net     10m52s   net      4m21s   net      1m05s   net
+zstd9           1h48m   net     10m51s   net      4m20s   net      1m05s   net
+adaptive        1h50m   net     11m01s   net      4m25s   net      1m06s   net
+  vs none             -1.1%            -1.1%            -1.1%            -1.1%

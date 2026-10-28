@@ -1,0 +1,35 @@
+== D:/SteamLibrary/steamapps/common/BeamNG.drive ==
+scan: 14604 files, 56.46 GB in 0.05s (275972 files/s)
+sizes:  <4K: 6941 files/0.0%  4K-64K: 5506 files/0.2%  64K-1M: 1720 files/1.2%  1M-16M: 300 files/2.2%  16M-256M: 71 files/10.2%  >256M: 66 files/86.3%
+sample: 2060 MiB in 524 blocks from 978 file reads, read at 11706 MB/s (0.18s, parallel random reads)
+
+codec      ratio   compress MB/s   decompress MB/s   (16 threads, measured)
+lz4        0.508           14478             19411
+zstd-5     0.511           13632             17534
+zstd-1     0.469            9568             16937
+zstd1      0.434            7700             13190
+zstd3      0.411            3725             11801
+zstd6      0.398            1325             11856
+zstd9      0.392             659             12043
+zstd12     0.391             273             12666
+
+incompressible blocks (zstd1 saves <3%): 8% of sampled bytes
+
+class        files     GB   share | ratio: lz4  zstd1  zstd3  zstd9 | best@100M  best@1G  best@2.5G  best@10G
+zip            176   52.6   93.1% |       0.49  0.42   0.40   0.38  |     zstd6     zstd6     zstd6     zstd3
+dll             75    1.6    2.8% |       0.69  0.54   0.51   0.50  |     zstd3     zstd3     zstd3     zstd3
+other        12685    1.1    1.9% |       0.52  0.41   0.38   0.35  |     zstd6     zstd6     zstd6     zstd3
+ttf            430    0.4    0.8% |       0.72  0.60   0.53   0.48  |     zstd9     zstd9     zstd6     zstd3
+jpg           1222    0.4    0.8% |       1.00  1.00   1.00   1.00  |      none      none      none      none
+so              16    0.4    0.7% |       0.65  0.52   0.46   0.41  |     zstd9     zstd6     zstd6     zstd3
+
+estimated transfer time for 56.5 GB (16 threads each side)
+strategy               100M               1G             2.5G              10G
+none            1h20m   net      8m01s   net      3m12s   net      0m48s   net
+lz4            40m36s   net      4m04s   net      1m37s   net      0m24s   net
+zstd-1         37m31s   net      3m45s   net      1m30s   net      0m23s   net
+zstd1          34m41s   net      3m28s   net      1m23s   net      0m21s   net
+zstd3          32m55s   net      3m17s   net      1m19s   net      0m20s   net
+zstd9          31m23s   net      3m08s   net      1m24s cpu-s      1m24s cpu-s
+adaptive       31m50s   net      3m11s   net      1m16s   net      0m20s   net
+  vs none            -60.3%           -60.2%           -60.2%           -58.9%

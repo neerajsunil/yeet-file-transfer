@@ -1,0 +1,80 @@
+// Asks whether to accept an incoming transfer.
+
+import { Albedo } from "../albedo.slint";
+import { Button, ButtonKind, Glyph, Separator } from "../components/controls.slint";
+import { Sheet } from "../components/sheet.slint";
+
+export component OfferSheet inherits Sheet {
+    in property <string> from;
+    in property <string> summary;
+    in property <[string]> items;
+    callback accept;
+    callback decline;
+    sheet-width: 340px;
+
+    HorizontalLayout {
+        alignment: center;
+        padding-top: Albedo.space-1;
+        Glyph {
+            size: 56px;
+            icon: @image-url("../icons/arrow-down.svg");
+            tint: Albedo.accent-text;
+            well: Albedo.accent-soft;
+        }
+    }
+    VerticalLayout {
+        spacing: 4px;
+        Text {
+            text: root.from;
+            font-size: Albedo.text-reading;
+            font-weight: 600;
+            color: Albedo.fg;
+            horizontal-alignment: center;
+            wrap: word-wrap;
+        }
+        Text {
+            text: "wants to send you " + root.summary;
+            font-size: Albedo.text-label;
+            color: Albedo.fg-2;
+            horizontal-alignment: center;
+            wrap: word-wrap;
+        }
+    }
+    Rectangle {
+        background: Albedo.dark ? Albedo.surface-disabled : Albedo.bg;
+        border-radius: Albedo.radius-md;
+        border-width: 1px;
+        border-color: Albedo.line;
+        VerticalLayout {
+            for name[i] in root.items: VerticalLayout {
+                if i > 0: Separator { inset: 12px; }
+                Text {
+                    height: 32px;
+                    x: 12px;
+                    width: parent.width - 24px;
+                    text: name;
+                    vertical-alignment: center;
+                    font-size: Albedo.text-label;
+                    color: Albedo.fg;
+                    overflow: elide;
+                }
+            }
+        }
+    }
+    HorizontalLayout {
+        spacing: Albedo.space-2;
+        Button {
+            horizontal-stretch: 1;
+            small: true;
+            text: "Decline";
+            clicked => { root.decline(); }
+        }
+        Button {
+            horizontal-stretch: 1;
+            small: true;
+            text: "Accept";
+            kind: ButtonKind.primary;
+            clicked => { root.accept(); }
+        }
+    }
+}
