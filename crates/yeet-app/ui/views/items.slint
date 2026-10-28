@@ -1,0 +1,134 @@
+// The "Send" section: picking files and folders, and the list of what was picked.
+
+import { Albedo } from "../albedo.slint";
+import { ItemRow } from "../rows.slint";
+import { Card, Button, ButtonKind, IconButton, Glyph, Separator, LinkButton } from "../components/controls.slint";
+
+export component ItemList inherits Card {
+    in property <[ItemRow]> items;
+    callback remove(int);
+    callback add-files;
+    callback add-folder;
+    VerticalLayout {
+        for item[i] in root.items: VerticalLayout {
+            Rectangle {
+                height: 44px;
+                background: row-touch.has-hover ? Albedo.surface-disabled : transparent;
+                animate background { duration: Albedo.duration-fast; }
+                row-touch := TouchArea { }
+                HorizontalLayout {
+                    padding-left: 12px;
+                    padding-right: 6px;
+                    spacing: 10px;
+                    VerticalLayout {
+                        alignment: center;
+                        Glyph {
+                            size: 28px;
+                            icon: item.folder ? @image-url("../icons/folder.svg") : @image-url("../icons/doc.svg");
+                            tint: item.folder ? Albedo.accent-text : Albedo.fg-2;
+                            well: item.folder ? Albedo.accent-soft : Albedo.surface;
+                        }
+                    }
+                    Text {
+                        text: item.name;
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                        font-size: Albedo.text-body-sm;
+                        color: Albedo.fg;
+                        overflow: elide;
+                    }
+                    Text {
+                        text: item.size;
+                        vertical-alignment: center;
+                        horizontal-stretch: 0;
+                        font-size: Albedo.text-caption;
+                        color: Albedo.fg-3;
+                    }
+                    VerticalLayout {
+                        alignment: center;
+                        IconButton {
+                            width: 28px;
+                            icon: @image-url("../icons/xmark.svg");
+                            clicked => { root.remove(i); }
+                        }
+                    }
+                }
+            }
+            Separator { inset: 50px; }
+        }
+        HorizontalLayout {
+            height: 40px;
+            padding-left: 14px;
+            padding-right: 14px;
+            spacing: Albedo.space-5;
+            alignment: start;
+            VerticalLayout {
+                alignment: center;
+                LinkButton {
+                    text: "Add Files…";
+                    has-icon: true;
+                    icon: @image-url("../icons/plus.svg");
+                    clicked => { root.add-files(); }
+                }
+            }
+            VerticalLayout {
+                alignment: center;
+                LinkButton {
+                    text: "Add Folder…";
+                    has-icon: true;
+                    icon: @image-url("../icons/plus.svg");
+                    clicked => { root.add-folder(); }
+                }
+            }
+        }
+    }
+}
+
+export component PickCard inherits Card {
+    callback add-files;
+    callback add-folder;
+    VerticalLayout {
+        padding-top: Albedo.space-6;
+        padding-bottom: Albedo.space-5;
+        spacing: Albedo.space-2;
+        HorizontalLayout {
+            alignment: center;
+            padding-bottom: Albedo.space-1;
+            Glyph {
+                size: 52px;
+                icon: @image-url("../icons/tray-up.svg");
+                tint: Albedo.accent-text;
+                well: Albedo.accent-soft;
+            }
+        }
+        Text {
+            text: "Choose what to send";
+            font-size: Albedo.text-body;
+            font-weight: 600;
+            color: Albedo.fg;
+            horizontal-alignment: center;
+        }
+        Text {
+            text: "Any mix of files and folders, any size.";
+            font-size: Albedo.text-caption;
+            color: Albedo.fg-2;
+            horizontal-alignment: center;
+        }
+        HorizontalLayout {
+            alignment: center;
+            spacing: Albedo.space-2;
+            padding-top: Albedo.space-2;
+            Button {
+                text: "Choose Files…";
+                small: true;
+                kind: ButtonKind.primary;
+                clicked => { root.add-files(); }
+            }
+            Button {
+                text: "Choose Folder…";
+                small: true;
+                clicked => { root.add-folder(); }
+            }
+        }
+    }
+}

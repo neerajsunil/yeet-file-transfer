@@ -1,0 +1,23 @@
+// Data the Rust side passes to the window, one struct per list row.
+
+export struct ItemRow {
+    name: string,
+    size: string,
+    folder: bool,
+}
+
+export struct DeviceRow {
+    name: string,
+    detail: string,
+}
+
+export struct TransferRow {
+    incoming: bool,
+    title: string,
+    subtitle: string,
+    progress: float,
+    detail: string,
+    // waiting | active | reconnecting | done | failed
+    state: string,
+    can-open: bool,
+}

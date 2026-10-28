@@ -1,0 +1,14 @@
+[package]
+name = "yeet-bench"
+description = "Measures compression strategies on real folders, to pick yeet's defaults"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+fastrand.workspace = true
+lz4_flex = "0.11"
+rayon = "1"
+walkdir.workspace = true
+zstd.workspace = true

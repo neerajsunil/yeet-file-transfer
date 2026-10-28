@@ -1,0 +1,311 @@
+// Small building blocks shared by every view, following Albedo (albedo.slint): flat surfaces,
+// 1px lines, state shown by stepping up the surface ladder, and the accent for "this one".
+
+import { Albedo } from "../albedo.slint";
+
+export component Card inherits Rectangle {
+    background: Albedo.panel;
+    border-radius: Albedo.radius-lg;
+    border-width: 1px;
+    border-color: Albedo.line;
+    clip: true;
+}
+
+export component SectionTitle inherits Text {
+    color: Albedo.fg-3;
+    font-size: Albedo.text-caption;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+// Accent text that acts like a button, for light actions next to content.
+export component LinkButton inherits Rectangle {
+    in property <string> text;
+    in property <image> icon;
+    in property <bool> has-icon;
+    in property <color> tint: Albedo.accent-text;
+    callback clicked;
+    height: 28px;
+    width: lay.preferred-width;
+    lay := HorizontalLayout {
+        spacing: 5px;
+        if root.has-icon: VerticalLayout {
+            alignment: center;
+            Image {
+                source: root.icon;
+                width: 13px;
+                height: self.width;
+                colorize: root.tint;
+            }
+        }
+        Text {
+            text: root.text;
+            vertical-alignment: center;
+            font-size: Albedo.text-label;
+            font-weight: 500;
+            color: root.tint;
+        }
+    }
+    opacity: touch.pressed ? 0.55 : touch.has-hover ? 0.8 : 1;
+    animate opacity { duration: Albedo.duration-fast; }
+    touch := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+}
+
+// A section's heading above its card, with room for a trailing link or note.
+export component SectionHeader inherits HorizontalLayout {
+    in property <string> title;
+    in property <string> note;
+    in property <string> action;
+    callback clicked;
+    padding-left: 4px;
+    padding-right: 4px;
+    height: 28px;
+    spacing: Albedo.space-2;
+    Text {
+        text: root.title;
+        vertical-alignment: center;
+        font-size: Albedo.text-body-sm;
+        font-weight: 600;
+        color: Albedo.fg;
+    }
+    Text {
+        text: root.note;
+        vertical-alignment: center;
+        horizontal-stretch: 1;
+        font-size: Albedo.text-caption;
+        color: Albedo.fg-3;
+        overflow: elide;
+    }
+    if root.action != "": LinkButton {
+        text: root.action;
+        clicked => { root.clicked(); }
+    }
+}
+
+// The accent dot that marks what is live or active.
+export component StarDot inherits Rectangle {
+    width: 7px;
+    height: 7px;
+    border-radius: self.width / 2;
+    background: Albedo.accent;
+}
+
+// "yeet" in bouncy, candy-coloured letters, matching the logo.
+export component Wordmark inherits HorizontalLayout {
+    spacing: 1px;
+    alignment: start;
+    for l in [
+        { ch: "y", dy: 2px, c: Albedo.dark ? #ff6f9a : #e0336b },
+        { ch: "e", dy: -2px, c: Albedo.dark ? #ff9a52 : #e2620f },
+        { ch: "e", dy: 1px, c: Albedo.dark ? #ffc93c : #c98a00 },
+        { ch: "t", dy: -3px, c: Albedo.dark ? #4fd6c4 : #11998a },
+        { ch: "!", dy: 0px, c: Albedo.dark ? #b69cff : #7b55e0 },
+    ]: VerticalLayout {
+        padding-top: 3px + l.dy;
+        padding-bottom: 3px - l.dy;
+        Text {
+            text: l.ch;
+            font-size: 30px;
+            font-weight: 900;
+            color: l.c;
+        }
+    }
+}
+
+export enum ButtonKind { default, primary, ghost, danger }
+
+export component Button inherits Rectangle {
+    in property <string> text;
+    in property <ButtonKind> kind;
+    in property <bool> small;
+    in property <bool> enabled: true;
+    in property <image> icon;
+    in property <bool> has-icon;
+    callback clicked;
+
+    property <color> ink: !root.enabled ? Albedo.fg-4
+        : root.kind == ButtonKind.primary ? Albedo.on-accent
+        : root.kind == ButtonKind.danger ? Albedo.danger
+        : root.kind == ButtonKind.ghost && !touch.has-hover ? Albedo.fg-2
+        : Albedo.fg;
+
+    height: root.small ? Albedo.size-control-sm : Albedo.size-control;
+    min-width: max(lay.preferred-width, root.height);
+    border-radius: Albedo.radius-md;
+    background: !root.enabled ? Albedo.surface-disabled
+        : root.kind == ButtonKind.primary ? (touch.has-hover ? Albedo.accent.mix(Albedo.fg, 0.86) : Albedo.accent)
+        : root.kind == ButtonKind.ghost ? (touch.has-hover ? Albedo.surface : transparent)
+        : (touch.has-hover ? Albedo.surface-hover : Albedo.surface);
+    animate background { duration: Albedo.duration-fast; easing: cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+    // Albedo's hover mark: a dot in the button's own ink.
+    Rectangle {
+        x: root.small ? 5px : 8px;
+        width: root.small ? 4px : 5px;
+        height: self.width;
+        border-radius: self.width / 2;
+        background: root.ink;
+        opacity: touch.has-hover && root.enabled && root.text != "" ? 1 : 0;
+        animate opacity { duration: Albedo.duration-fast; }
+    }
+    lay := HorizontalLayout {
+        padding-left: root.small ? Albedo.space-3 : 18px;
+        padding-right: self.padding-left;
+        spacing: Albedo.space-2;
+        alignment: center;
+        if root.has-icon: VerticalLayout {
+            alignment: center;
+            Image {
+                source: root.icon;
+                width: root.small ? 14px : 17px;
+                height: self.width;
+                colorize: root.ink;
+            }
+        }
+        Text {
+            text: root.text;
+            vertical-alignment: center;
+            font-size: root.small ? Albedo.text-label : Albedo.text-body-sm;
+            font-weight: 500;
+            color: root.ink;
+        }
+    }
+    touch := TouchArea {
+        enabled: root.enabled;
+        mouse-cursor: root.enabled ? pointer : default;
+        clicked => { root.clicked(); }
+    }
+}
+
+// A ghost button holding only an icon.
+export component IconButton inherits Rectangle {
+    in property <image> icon;
+    callback clicked;
+    width: Albedo.size-control-sm;
+    height: self.width;
+    border-radius: Albedo.radius-md;
+    background: touch.has-hover ? Albedo.surface : transparent;
+    animate background { duration: Albedo.duration-fast; }
+    Image {
+        source: root.icon;
+        width: root.width * 0.45;
+        height: self.width;
+        colorize: touch.has-hover ? Albedo.fg : Albedo.fg-2;
+    }
+    touch := TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.clicked(); }
+    }
+}
+
+// An icon in a tinted square, marking what a row is.
+export component Glyph inherits Rectangle {
+    in property <image> icon;
+    in property <color> tint: Albedo.fg-2;
+    in property <color> well: Albedo.surface;
+    in property <length> size: 36px;
+    width: root.size;
+    height: root.size;
+    border-radius: root.size * 0.28;
+    background: root.well;
+    animate background { duration: Albedo.duration-fast; }
+    Image {
+        source: root.icon;
+        width: root.size * 0.5;
+        height: self.width;
+        colorize: root.tint;
+    }
+}
+
+export component Separator inherits Rectangle {
+    in property <length> inset: 0;
+    height: 1px;
+    Rectangle {
+        x: root.inset;
+        width: parent.width - root.inset;
+        height: 1px;
+        background: Albedo.line;
+    }
+}
+
+export component ProgressBar inherits Rectangle {
+    in property <float> value;
+    in property <color> tint: Albedo.accent;
+    height: 4px;
+    border-radius: self.height / 2;
+    background: Albedo.surface-hover;
+    clip: true;
+    Rectangle {
+        x: 0;
+        width: parent.width * max(0, min(1, root.value));
+        height: parent.height;
+        border-radius: parent.border-radius;
+        background: root.tint;
+        // Linear and longer than the refresh interval, so steady updates read as one glide.
+        animate width { duration: Albedo.duration-base; easing: linear; }
+    }
+}
+
+export component Switch inherits Rectangle {
+    in-out property <bool> checked;
+    width: 46px;
+    height: 28px;
+    border-radius: 8px;
+    background: root.checked ? Albedo.accent : Albedo.surface-hover;
+    animate background { duration: 200ms; easing: cubic-bezier(0.2, 0.8, 0.2, 1); }
+    Rectangle {
+        x: root.checked ? parent.width - self.width - 3px : 3px;
+        y: 3px;
+        width: 22px;
+        height: 22px;
+        border-radius: Albedo.radius-sm;
+        background: root.checked ? Albedo.on-accent : Albedo.knob;
+        animate x { duration: Albedo.duration-spring; easing: cubic-bezier(0.34, 1.36, 0.64, 1); }
+    }
+    TouchArea {
+        mouse-cursor: pointer;
+        clicked => { root.checked = !root.checked; }
+    }
+}
+
+// A one-line text box.
+export component Field inherits Rectangle {
+    in-out property <string> text;
+    in property <string> placeholder-text;
+    callback accepted;
+    height: Albedo.size-control;
+    border-radius: Albedo.radius-md;
+    background: input.has-focus ? Albedo.bg : hover.has-hover ? Albedo.surface-hover : Albedo.surface;
+    border-width: input.has-focus ? 1.5px : 0px;
+    border-color: Albedo.accent;
+    animate background { duration: Albedo.duration-fast; }
+    hover := TouchArea {
+        mouse-cursor: MouseCursor.text;
+        clicked => { input.focus(); }
+    }
+    Text {
+        x: 14px;
+        width: parent.width - 28px;
+        height: parent.height;
+        vertical-alignment: center;
+        text: root.placeholder-text;
+        visible: root.text == "";
+        font-size: Albedo.text-body-sm;
+        color: Albedo.fg-3;
+    }
+    input := TextInput {
+        x: 14px;
+        width: parent.width - 28px;
+        height: parent.height;
+        vertical-alignment: center;
+        text <=> root.text;
+        font-size: Albedo.text-body-sm;
+        color: Albedo.fg;
+        selection-background-color: Albedo.accent-soft;
+        single-line: true;
+        accepted => { root.accepted(); }
+    }
+}

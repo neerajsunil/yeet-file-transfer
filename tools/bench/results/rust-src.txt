@@ -1,0 +1,37 @@
+== ~/.cargo/registry/src ==
+scan: 25516 files, 0.73 GB in 0.24s (107422 files/s)
+sizes:  <4K: 12715 files/2.5%  4K-64K: 11020 files/23.5%  64K-1M: 1716 files/48.3%  1M-16M: 65 files/25.8%  16M-256M: 0 files/0.0%  >256M: 0 files/0.0%
+sample: 698 MiB in 212 blocks from 25532 file reads, read at 2690 MB/s (0.27s, parallel random reads)
+
+codec      ratio   compress MB/s   decompress MB/s   (16 threads, measured)
+lz4        0.209           12739             21702
+zstd-5     0.204            9837             15710
+zstd-1     0.162            8878             15166
+zstd1      0.141            8678             13019
+zstd3      0.128            6028             12523
+zstd6      0.111            1732             12641
+zstd9      0.107            1099             13550
+zstd12     0.106             469             13008
+
+incompressible blocks (zstd1 saves <3%): 0% of sampled bytes
+
+class        files     GB   share | ratio: lz4  zstd1  zstd3  zstd9 | best@100M  best@1G  best@2.5G  best@10G
+rs           19427    0.6   80.3% |       0.20  0.14   0.13   0.11  |     zstd9     zstd9     zstd3     zstd1
+a               10    0.1    9.0% |       0.14  0.10   0.08   0.07  |     zstd9     zstd6     zstd3     zstd1
+lib              7    0.0    4.0% |       0.26  0.18   0.15   0.13  |    zstd12     zstd9     zstd3     zstd1
+other         4967    0.0    3.2% |       0.39  0.26   0.22   0.19  |     zstd9     zstd9     zstd6     zstd3
+txt             76    0.0    1.2% |       0.15  0.10   0.08   0.07  |     zstd9     zstd6     zstd3     zstd1
+xml            166    0.0    1.1% |       0.19  0.12   0.10   0.08  |     zstd9     zstd6     zstd3     zstd1
+md             862    0.0    0.7% |       0.47  0.33   0.27   0.23  |     zstd9     zstd9     zstd3     zstd1
+hex              1    0.0    0.5% |       0.45  0.26   0.27   0.22  |     zstd9     zstd9     zstd1     zstd1
+
+estimated transfer time for 0.7 GB (16 threads each side)
+strategy               100M               1G             2.5G              10G
+none            1m02s   net      0m06s   net      0m02s   net      0m01s   net
+lz4             0m13s   net      0m01s   net      0m01s   net      0m00s   net
+zstd-1          0m10s   net      0m01s   net      0m00s   net      0m00s   net
+zstd1           0m09s   net      0m01s   net      0m00s   net      0m00s   net
+zstd3           0m08s   net      0m01s   net      0m00s   net      0m00s cpu-s
+zstd9           0m07s   net      0m01s   net      0m01s cpu-s      0m01s cpu-s
+adaptive        0m07s   net      0m01s   net      0m00s   net      0m00s   net
+  vs none            -89.3%           -89.2%           -87.2%           -86.0%

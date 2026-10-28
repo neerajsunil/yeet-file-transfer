@@ -1,0 +1,67 @@
+// Albedo 0.1.0. Generated from tokens/ by scripts/build.py. Do not edit.
+// import { Albedo, Star } from "albedo.slint";
+// Albedo.dark = true; Albedo.star = Star.rigel;  (the star's own colour is star-color)
+
+export enum Star { antares, arcturus, sol, procyon, vega, rigel, spica }
+
+export global Albedo {
+    in-out property <bool> dark: true;
+    in-out property <Star> star: Star.sol;
+
+    out property <color> bg: dark ? #07090e : #f2f3f6;
+    out property <color> panel: dark ? #0f1118 : #fdfdff;
+    out property <color> surface-disabled: dark ? #14161c : #eff0f3;
+    out property <color> surface: dark ? #1e2129 : #e4e6ea;
+    out property <color> surface-hover: dark ? #2d3039 : #d7d9df;
+    out property <color> fg: dark ? #edeef3 : #13161d;
+    out property <color> fg-2: dark ? #a7abb3 : #4a4d55;
+    out property <color> fg-3: dark ? #8c8f97 : #60636a;
+    out property <color> fg-4: dark ? #4d5055 : #a2a4ab;
+    out property <color> line: dark ? #ffffff17 : #12161f1c;
+    out property <color> knob: dark ? #f0f2f4 : #ffffff;
+    out property <color> danger: dark ? #fd736d : #be222a;
+    out property <color> success: dark ? #61cb7c : #137738;
+    out property <color> warning: dark ? #f5ae39 : #945a00;
+
+    out property <color> accent: star == Star.antares ? (dark ? #ff8f63 : #c33d02) : star == Star.arcturus ? (dark ? #ff9c41 : #b84d00) : star == Star.sol ? (dark ? #eab532 : #996700) : star == Star.procyon ? (dark ? #d4bb7f : #866f34) : star == Star.vega ? (dark ? #8cc7e7 : #3f7997) : star == Star.rigel ? (dark ? #7cc4ff : #2d75b5) : dark ? #7fbbff : #366bd5;
+    out property <color> accent-text: star == Star.antares ? (dark ? #ff9f7a : #9d3106) : star == Star.arcturus ? (dark ? #ffa85d : #973b00) : star == Star.sol ? (dark ? #f0bb3b : #805000) : star == Star.procyon ? (dark ? #dac286 : #6e581b) : star == Star.vega ? (dark ? #92cdee : #27627f) : star == Star.rigel ? (dark ? #83caff : #0e5e9c) : dark ? #8fc3ff : #2955ad;
+    out property <color> accent-soft: star == Star.antares ? (dark ? #ff8f632e : #c33d0224) : star == Star.arcturus ? (dark ? #ff9c412e : #b84d0024) : star == Star.sol ? (dark ? #eab5322e : #99670024) : star == Star.procyon ? (dark ? #d4bb7f2e : #866f3424) : star == Star.vega ? (dark ? #8cc7e72e : #3f799724) : star == Star.rigel ? (dark ? #7cc4ff2e : #2d75b524) : dark ? #7fbbff2e : #366bd524;
+    out property <color> on-accent: star == Star.antares ? (dark ? #22110c : #fcfcfc) : star == Star.arcturus ? (dark ? #211208 : #fcfcfc) : star == Star.sol ? (dark ? #1c1505 : #fcfcfc) : star == Star.procyon ? (dark ? #1c1505 : #fcfcfc) : star == Star.vega ? (dark ? #071821 : #fcfcfc) : star == Star.rigel ? (dark ? #0b1723 : #fcfcfc) : dark ? #0f1624 : #fcfcfc;
+    out property <color> star-color: star == Star.antares ? (dark ? #ffa276 : #ffa276) : star == Star.arcturus ? (dark ? #ffb057 : #ffb057) : star == Star.sol ? (dark ? #fec84b : #fec84b) : star == Star.procyon ? (dark ? #e8cf92 : #e8cf92) : star == Star.vega ? (dark ? #9fdafb : #9fdafb) : star == Star.rigel ? (dark ? #8fd8ff : #8fd8ff) : dark ? #92ceff : #92ceff;
+
+    out property <length> space-1: 4px;
+    out property <length> space-2: 8px;
+    out property <length> space-3: 12px;
+    out property <length> space-4: 16px;
+    out property <length> space-5: 20px;
+    out property <length> space-6: 24px;
+    out property <length> space-7: 32px;
+    out property <length> space-8: 48px;
+    out property <length> space-9: 64px;
+    out property <length> space-10: 96px;
+    out property <length> size-hit: 44px;
+    out property <length> size-control: 44px;
+    out property <length> size-control-sm: 34px;
+    out property <length> radius-xs: 4px;
+    out property <length> radius-sm: 6px;
+    out property <length> radius-inner: 7px;
+    out property <length> radius-md: 10px;
+    out property <length> radius-lg: 12px;
+    out property <length> radius-xl: 16px;
+    out property <length> radius-full: 999px;
+    out property <length> text-caption: 12px;
+    out property <length> text-label: 13px;
+    out property <length> text-body-sm: 14px;
+    out property <length> text-body: 15px;
+    out property <length> text-reading: 17px;
+    out property <length> text-title-3: 20px;
+    out property <length> text-title-2: 26px;
+    out property <length> text-title-1: 34px;
+    out property <length> text-display: 48px;
+    out property <duration> duration-instant: 80ms;
+    out property <duration> duration-fast: 140ms;
+    out property <duration> duration-base: 240ms;
+    out property <duration> duration-spring: 440ms;
+}
+
+// Easing for animate blocks: ease-out = cubic-bezier(0.2, 0.8, 0.2, 1), spring = cubic-bezier(0.34, 1.36, 0.64, 1)

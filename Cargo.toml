@@ -1,0 +1,40 @@
+[workspace]
+members = ["crates/yeet-core", "crates/yeet-cli", "crates/yeet-app", "tools/bench"]
+default-members = ["crates/yeet-core", "crates/yeet-cli", "crates/yeet-app"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.92"
+license = "MIT OR Apache-2.0"
+authors = ["yeet contributors"]
+
+[workspace.dependencies]
+yeet-core = { path = "crates/yeet-core" }
+crossbeam-channel = "0.5"
+fastrand = "2"
+mdns-sd = "0.21"
+socket2 = { version = "0.5", features = ["all"] }
+walkdir = "2"
+zstd = "0.13"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_debug_implementations = "allow"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+# Readability over terseness in a few places where the suggestion hurts it.
+too_many_arguments = "allow"
+type_complexity = "allow"
+
+[profile.release]
+# The GUI is built for size; the transfer engine and zstd stay at full speed below.
+opt-level = "z"
+lto = "fat"
+codegen-units = 1
+strip = true
+
+[profile.release.package.yeet-core]
+opt-level = 3

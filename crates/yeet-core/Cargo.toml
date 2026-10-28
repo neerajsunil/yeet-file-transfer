@@ -1,0 +1,29 @@
+[package]
+name = "yeet-core"
+description = "yeet's transfer engine: fast, resumable file and folder transfer over a LAN"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[features]
+# Stage timings and slow-file logs on stderr, for profiling. Off in normal builds.
+timing = []
+
+[dependencies]
+crossbeam-channel.workspace = true
+fastrand.workspace = true
+mdns-sd.workspace = true
+socket2.workspace = true
+walkdir.workspace = true
+zstd.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_IO"] }
+
+[dev-dependencies]
+tempfile = "3"
+
+[lints]
+workspace = true

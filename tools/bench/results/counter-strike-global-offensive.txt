@@ -1,0 +1,32 @@
+== D:/SteamLibrary/steamapps/common/Counter-Strike Global Offensive ==
+scan: 3428 files, 73.97 GB in 0.01s (647538 files/s)
+sizes:  <4K: 1776 files/0.0%  4K-64K: 514 files/0.0%  64K-1M: 343 files/0.1%  1M-16M: 146 files/1.0%  16M-256M: 632 files/89.2%  >256M: 17 files/9.8%
+sample: 2067 MiB in 522 blocks from 668 file reads, read at 3974 MB/s (0.55s, parallel random reads)
+
+codec      ratio   compress MB/s   decompress MB/s   (16 threads, measured)
+lz4        0.955           17263             18071
+zstd-5     0.948           15861             16017
+zstd-1     0.941           12506             16257
+zstd1      0.897            8712             11569
+zstd3      0.878            2706             11643
+zstd6      0.871            1110             11271
+zstd9      0.861             506             10849
+zstd12     0.860             206             11569
+
+incompressible blocks (zstd1 saves <3%): 25% of sampled bytes
+
+class        files     GB   share | ratio: lz4  zstd1  zstd3  zstd9 | best@100M  best@1G  best@2.5G  best@10G
+vpk            745   73.1   98.8% |       0.96  0.90   0.88   0.86  |     zstd3     zstd3     zstd3     zstd1
+dll             99    0.5    0.7% |       0.51  0.40   0.35   0.33  |     zstd6     zstd6     zstd6     zstd1
+other         2584    0.3    0.4% |       0.99  0.97   0.96   0.95  |     zstd1     zstd1     zstd1    zstd-5
+
+estimated transfer time for 74.0 GB (16 threads each side)
+strategy               100M               1G             2.5G              10G
+none            1h44m   net     10m30s   net      4m12s   net      1m03s   net
+lz4             1h40m   net     10m02s   net      4m01s   net      1m00s   net
+zstd-1          1h38m   net      9m53s   net      3m57s   net      0m59s   net
+zstd1           1h34m   net      9m25s   net      3m46s   net      0m57s   net
+zstd3           1h32m   net      9m13s   net      3m41s   net      0m55s   net
+zstd9           1h30m   net      9m02s   net      3m37s   net      2m24s cpu-s
+adaptive        1h32m   net      9m13s   net      3m41s   net      0m57s   net
+  vs none            -12.2%           -12.2%           -12.2%           -10.2%

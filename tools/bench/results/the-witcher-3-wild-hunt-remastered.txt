@@ -1,0 +1,35 @@
+== D:/Games/The Witcher 3 Wild Hunt Remastered ==
+scan: 1816 files, 64.51 GB in 0.01s (301341 files/s)
+sizes:  <4K: 1116 files/0.0%  4K-64K: 503 files/0.0%  64K-1M: 64 files/0.0%  1M-16M: 85 files/0.8%  16M-256M: 34 files/3.7%  >256M: 14 files/95.4%
+sample: 2058 MiB in 519 blocks from 612 file reads, read at 3864 MB/s (0.56s, parallel random reads)
+
+codec      ratio   compress MB/s   decompress MB/s   (16 threads, measured)
+lz4        0.983           17974             17996
+zstd-5     0.978           14988             15897
+zstd-1     0.975           14840             16534
+zstd1      0.971           12383             15741
+zstd3      0.966            5367             15511
+zstd6      0.967            3010             16116
+zstd9      0.966            1579             15723
+zstd12     0.965             703             15280
+
+incompressible blocks (zstd1 saves <3%): 81% of sampled bytes
+
+class        files     GB   share | ratio: lz4  zstd1  zstd3  zstd9 | best@100M  best@1G  best@2.5G  best@10G
+cache            7   37.2   57.6% |       1.00  1.00   1.00   1.00  |      none      none      none      none
+bundle          31   21.1   32.7% |       0.98  0.96   0.95   0.95  |       lz4       lz4       lz4       lz4
+w3speech         1    4.2    6.6% |       0.97  0.96   0.94   0.95  |       lz4       lz4       lz4       lz4
+other         1691    0.7    1.2% |       0.56  0.39   0.35   0.33  |     zstd6     zstd6     zstd6     zstd1
+msi              1    0.7    1.1% |       1.00  1.00   1.00   1.00  |      none      none      none      none
+dll             85    0.6    0.9% |       0.54  0.42   0.37   0.33  |     zstd9     zstd9     zstd3     zstd1
+
+estimated transfer time for 64.5 GB (16 threads each side)
+strategy               100M               1G             2.5G              10G
+none            1h31m   net      9m09s   net      3m40s   net      0m55s   net
+lz4             1h30m   net      9m00s   net      3m36s   net      0m54s   net
+zstd-1          1h29m   net      8m56s   net      3m34s   net      0m54s   net
+zstd1           1h28m   net      8m53s   net      3m33s   net      0m53s   net
+zstd3           1h28m   net      8m51s   net      3m32s   net      0m53s   net
+zstd9           1h28m   net      8m51s   net      3m32s   net      0m53s   net
+adaptive        1h29m   net      8m57s   net      3m35s   net      0m54s   net
+  vs none             -2.3%            -2.3%            -2.2%            -2.1%

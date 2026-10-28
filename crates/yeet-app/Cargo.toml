@@ -1,0 +1,39 @@
+[package]
+name = "yeet-app"
+description = "yeet desktop app"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "yeet"
+path = "src/main.rs"
+
+[features]
+# Environment-variable hooks for driving the app headless in end-to-end tests. Off in releases.
+e2e = []
+
+[dependencies]
+crossbeam-channel.workspace = true
+dirs = "6"
+fastrand.workspace = true
+yeet-core.workspace = true
+png = "0.17"
+rfd = "0.17"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Software renderer only: the UI is simple, and it keeps the binary small and the look identical
+# to the screenshots rendered in CI.
+slint = { version = "1.18", default-features = false, features = ["std", "compat-1-2", "accessibility", "backend-winit", "renderer-software", "software-renderer-systemfonts", "software-renderer-path"] }
+walkdir.workspace = true
+
+[build-dependencies]
+slint-build = "1.18"
+
+[lints]
+workspace = true
+
+[target."cfg(windows)".build-dependencies]
+winresource = "0.1.34"
