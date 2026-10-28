@@ -155,8 +155,7 @@ fn handle_conn(
     (&stream).write_all(&p::have(&have))?;
 
     let threads = crate::disk::writers(&state.disk, threads);
-    let result =
-        with_cancel_watch(&stream, live, || pipeline::run(&stream, &mut r, &mut state, threads, local, live))
+    let result = with_cancel_watch(&stream, live, || pipeline::run(&stream, &mut r, &mut state, threads, local, live))
         .map_err(|e| if live.cancelled() { Error::Cancelled } else { e });
     // Update the session while still holding `state`, so a reconnect waiting on it sees this first.
     session.detach();

@@ -3,12 +3,12 @@
 use crate::format;
 use crate::state::{App, PendingOffer, Transfer};
 use crate::text;
-use yeet_core::recv::{Handler, Offer};
-use yeet_core::{Live, Report, Result};
 use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
+use yeet_core::recv::{Handler, Offer};
+use yeet_core::{Live, Report, Result};
 
 /// How long the person has to answer an incoming offer.
 const ANSWER_WITHIN: Duration = Duration::from_secs(60);

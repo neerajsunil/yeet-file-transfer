@@ -30,7 +30,11 @@ pub(super) fn copy_file(src: &Path, dest: &Path, progress: &mut dyn FnMut(u64) -
     ) -> u32 {
         // SAFETY: `data` is the `&mut &mut dyn FnMut` passed below, alive for the whole call.
         let f = unsafe { &mut *(data as *mut &mut dyn FnMut(u64) -> bool) };
-        if f(done as u64) { PROGRESS_CONTINUE } else { PROGRESS_CANCEL }
+        if f(done as u64) {
+            PROGRESS_CONTINUE
+        } else {
+            PROGRESS_CANCEL
+        }
     }
 
     let wide = |p: &Path| p.as_os_str().encode_wide().chain(Some(0)).collect::<Vec<u16>>();

@@ -45,14 +45,6 @@ impl Placer {
     pub fn mark_dir(&mut self, dir: &Path) -> bool {
         self.made_dirs.insert(dir.to_path_buf())
     }
-
-    /// Creates `dir` (and its parents) unless this session already did.
-    pub fn ensure_dir(&mut self, dir: &Path) -> Result<()> {
-        if self.made_dirs.insert(dir.to_path_buf()) {
-            std::fs::create_dir_all(dir)?;
-        }
-        Ok(())
-    }
 }
 
 /// `name`, or `name (2)`, `name (3)`... whichever doesn't exist in `dir` yet.

@@ -8,8 +8,8 @@ use crate::{Error, Live, Report, Result};
 use crossbeam_channel::{bounded, Receiver, Sender};
 use std::fs::File;
 use std::io::{BufReader, Read, Write};
-use std::path::PathBuf;
 use std::net::{Shutdown, TcpStream};
+use std::path::PathBuf;
 use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
 use std::time::{Duration, Instant};
 
@@ -54,13 +54,17 @@ pub(super) fn run(
             })
             .collect();
         drop(rx);
-        #[cfg(feature = "timing")] let t0 = Instant::now();
+        #[cfg(feature = "timing")]
+        let t0 = Instant::now();
         let read = read_loop(r, placer, files, max_file, local, tx, mtx, live);
-        #[cfg(feature = "timing")] eprintln!("[r] read done {:?}", t0.elapsed());
+        #[cfg(feature = "timing")]
+        eprintln!("[r] read done {:?}", t0.elapsed());
         let made = maker.join().expect("maker panicked");
-        #[cfg(feature = "timing")] eprintln!("[r] meta done {:?}", t0.elapsed());
+        #[cfg(feature = "timing")]
+        eprintln!("[r] meta done {:?}", t0.elapsed());
         let written: Result<()> = writers.into_iter().try_for_each(|w| w.join().expect("writer panicked"));
-        #[cfg(feature = "timing")] eprintln!("[r] writers done {:?}", t0.elapsed());
+        #[cfg(feature = "timing")]
+        eprintln!("[r] writers done {:?}", t0.elapsed());
         stop_acks.store(true, Relaxed);
         let acked = acker.join().expect("acker panicked");
         (read, made, written, acked)
@@ -171,8 +175,10 @@ fn read_loop(
 /// themselves too, so nothing waits on this thread.
 fn make_meta(rx: Receiver<(PathBuf, bool)>) -> Result<()> {
     for (path, dir) in rx {
-        #[cfg(feature = "timing")] let t0 = Instant::now();
-        #[cfg(feature = "timing")] let _slow = SlowLog(t0, path.clone());
+        #[cfg(feature = "timing")]
+        let t0 = Instant::now();
+        #[cfg(feature = "timing")]
+        let _slow = SlowLog(t0, path.clone());
         if dir {
             std::fs::create_dir_all(&path)?;
         } else {
@@ -185,8 +191,10 @@ fn make_meta(rx: Receiver<(PathBuf, bool)>) -> Result<()> {
     Ok(())
 }
 
-#[cfg(feature = "timing")] struct SlowLog(Instant, PathBuf);
-#[cfg(feature = "timing")] impl Drop for SlowLog {
+#[cfg(feature = "timing")]
+struct SlowLog(Instant, PathBuf);
+#[cfg(feature = "timing")]
+impl Drop for SlowLog {
     fn drop(&mut self) {
         if self.0.elapsed() > Duration::from_millis(100) {
             eprintln!("[slow-meta] {:?} {}", self.0.elapsed(), self.1.display());
@@ -214,11 +222,15 @@ fn copy_local(id: u64, src: &std::path::Path, files: &Files, live: &Live) -> Res
 /// Decompresses chunks and writes their segments, or copies local files.
 fn writer(work: Receiver<Work>, files: &Files, live: &Live) -> Result<()> {
     let mut zstd = zstd::bulk::Decompressor::new()?;
-    #[cfg(feature = "timing")] let start = Instant::now();
-    #[cfg(feature = "timing")] let mut busy = Duration::ZERO;
-    #[cfg(feature = "timing")] let mut last = Duration::ZERO;
+    #[cfg(feature = "timing")]
+    let start = Instant::now();
+    #[cfg(feature = "timing")]
+    let mut busy = Duration::ZERO;
+    #[cfg(feature = "timing")]
+    let mut last = Duration::ZERO;
     for item in work {
-        #[cfg(feature = "timing")] let t0 = Instant::now();
+        #[cfg(feature = "timing")]
+        let t0 = Instant::now();
 
         if live.cancelled() {
             return Err(Error::Cancelled);
@@ -256,10 +268,17 @@ fn writer(work: Receiver<Work>, files: &Files, live: &Live) -> Result<()> {
                 live.files_done.fetch_add(1, Relaxed);
             }
         }
-        #[cfg(feature = "timing")] { busy += t0.elapsed(); }
-        #[cfg(feature = "timing")] { last = start.elapsed(); }
+        #[cfg(feature = "timing")]
+        {
+            busy += t0.elapsed();
+        }
+        #[cfg(feature = "timing")]
+        {
+            last = start.elapsed();
+        }
     }
-    #[cfg(feature = "timing")] if last > Duration::from_secs(4) || busy > Duration::from_secs(3) {
+    #[cfg(feature = "timing")]
+    if last > Duration::from_secs(4) || busy > Duration::from_secs(3) {
         eprintln!("[writer] busy {busy:?} last chunk done at {last:?}");
     }
     Ok(())

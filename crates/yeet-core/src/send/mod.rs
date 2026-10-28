@@ -110,14 +110,16 @@ const NOTIFY_TIMEOUT: Duration = Duration::from_secs(2);
 
 /// Sends `o.sources` to the peer, blocking until done. Progress and cancellation go through `live`.
 pub fn send(o: &SendOpts, live: &Live) -> Result<Report> {
-    #[cfg(feature = "timing")] let t0 = Instant::now();
+    #[cfg(feature = "timing")]
+    let t0 = Instant::now();
     let prepared = o.prepared.as_ref().filter(|p| p.sources == o.sources);
     let early = prepared.and_then(|p| p.scanned.lock().expect("poisoned").take()).and_then(|rx| rx.recv().ok());
     let entries = match early {
         Some(Ok(e)) => e,
         _ => Arc::new(scan::scan(&o.sources)?),
     };
-    #[cfg(feature = "timing")] eprintln!("[t] scan {:?}", t0.elapsed());
+    #[cfg(feature = "timing")]
+    eprintln!("[t] scan {:?}", t0.elapsed());
     // Read ahead while the person on the other side decides, unless `prepare` already is.
     let warming = match prepared {
         Some(p) => p.stop_warming.clone(),
@@ -306,18 +308,22 @@ fn attempt(
                 })
                 .collect();
             drop(plan_rx);
-            #[cfg(feature = "timing")] let t0 = Instant::now();
+            #[cfg(feature = "timing")]
+            let t0 = Instant::now();
             let planned = if local {
                 drop(plan_tx);
                 plan::plan_local(entries, &have, frame_tx)
             } else {
                 plan::plan(entries, &have, in_order, plan_tx, frame_tx)
             };
-            #[cfg(feature = "timing")] eprintln!("[t] planned {:?}", t0.elapsed());
+            #[cfg(feature = "timing")]
+            eprintln!("[t] planned {:?}", t0.elapsed());
             let packed: Result<()> = packers.into_iter().try_for_each(|w| w.join().expect("packer panicked"));
-            #[cfg(feature = "timing")] eprintln!("[t] packed {:?}", t0.elapsed());
+            #[cfg(feature = "timing")]
+            eprintln!("[t] packed {:?}", t0.elapsed());
             let written = writer.join().expect("writer panicked");
-            #[cfg(feature = "timing")] eprintln!("[t] written {:?}", t0.elapsed());
+            #[cfg(feature = "timing")]
+            eprintln!("[t] written {:?}", t0.elapsed());
             told_peer = matches!(written, Err(Error::Cancelled));
             let read = reader.join().expect("reader panicked");
             // The reader sees the root cause (CANCEL, timeout) when the connection dies.

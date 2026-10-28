@@ -1,9 +1,5 @@
 //! End-to-end transfers over loopback: a real receiver, a real sender, real files.
 
-use yeet_core::protocol::{self as p, Kind};
-use yeet_core::recv::{self, Handler, Offer};
-use yeet_core::send::{self, Compress, SendOpts};
-use yeet_core::{Error, Live, Report, Result};
 use std::io::{Read, Write};
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::path::{Path, PathBuf};
@@ -11,6 +7,10 @@ use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering::Relaxed};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 use std::{fs, thread};
+use yeet_core::protocol::{self as p, Kind};
+use yeet_core::recv::{self, Handler, Offer};
+use yeet_core::send::{self, Compress, SendOpts};
+use yeet_core::{Error, Live, Report, Result};
 
 // ---------------------------------------------------------------- receiver side
 
@@ -108,7 +108,16 @@ impl Receiver {
 // ---------------------------------------------------------------- sender side
 
 fn opts(sources: Vec<PathBuf>, to: SocketAddr, compress: Compress, limit: Option<f64>) -> SendOpts {
-    SendOpts { sources, resolve: Arc::new(move || vec![to]), name: "test sender".into(), limit, compress, threads: 4, prepared: None, local: false }
+    SendOpts {
+        sources,
+        resolve: Arc::new(move || vec![to]),
+        name: "test sender".into(),
+        limit,
+        compress,
+        threads: 4,
+        prepared: None,
+        local: false,
+    }
 }
 
 /// A folder like a small game install: nested folders, many small files, a big compressible
